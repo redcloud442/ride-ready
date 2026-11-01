@@ -1,0 +1,15 @@
+model VehicleDocument {
+  id         String    @id @default(uuid())
+  vehicleId  String
+  vehicle    Vehicle   @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  kind       String // manual, receipt, warranty, insurance, registration, photo
+  storageKey String // private object storage key, never a public URL
+  mimeType   String
+  title      String?
+  expiresAt  DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+
+  @@index([vehicleId, createdAt])
+}

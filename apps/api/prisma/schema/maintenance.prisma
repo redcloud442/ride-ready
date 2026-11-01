@@ -1,0 +1,19 @@
+model MaintenanceRecord {
+  id          String    @id @default(uuid())
+  vehicleId   String
+  vehicle     Vehicle   @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  performedAt DateTime
+  odometerKm  Decimal?
+  kind        String // service, repair, ...
+  description String
+  parts       Json      @default("[]")
+  laborCost   Decimal?
+  partsCost   Decimal?
+  currency    String?   @db.Char(3)
+  workshop    String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  @@index([vehicleId, performedAt])
+}

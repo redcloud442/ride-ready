@@ -1,0 +1,15 @@
+{
+  "name": "ride-ready",
+  "private": true,
+  "packageManager": "pnpm@10.26.0",
+  "scripts": {
+    "mobile": "pnpm --filter mobile start",
+    "api": "pnpm --filter api dev",
+    "typecheck": "pnpm -r typecheck",
+    "app:start": "pnpm --parallel --filter api --filter mobile dev",
+    "stack:up": "docker compose up -d",
+    "stack:down": "docker compose down",
+    "lint": "pnpm --filter mobile lint",
+    "test": "pnpm -r test"
+  }
+}

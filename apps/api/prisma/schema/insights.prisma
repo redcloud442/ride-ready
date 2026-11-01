@@ -1,0 +1,11 @@
+model VehicleInsight {
+  id                String   @id @default(uuid())
+  vehicleId         String
+  vehicle           Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  kind              String
+  body              String
+  quality           String // measured | calculated | estimated (core MetricQuality)
+  confidence        Decimal?
+  supportingRecords Json     @default("[]") // ids of records the claim is traceable to
+  createdAt         DateTime @default(now())
+}

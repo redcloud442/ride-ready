@@ -1,0 +1,66 @@
+enum VehicleType {
+  car
+  motorcycle
+}
+
+enum Propulsion {
+  gasoline
+  diesel
+  hybrid
+  phev
+  ev
+}
+
+enum ReadingSource {
+  manual
+  photo_ocr
+  trip_gps
+  receipt
+}
+
+model Vehicle {
+  id                 String      @id @default(uuid())
+  userId             String
+  user               User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type               VehicleType
+  propulsion         Propulsion
+  make               String
+  model              String
+  year               Int
+  variant            String?
+  bodyStyle          String? // core BODY_STYLES; picks the illustration only
+  color              String? // core VEHICLE_COLORS; paints the illustration only
+  tankCapacityL      Decimal?
+  batteryCapacityKwh Decimal?
+  specs              Json        @default("{}") // tires, fluids, parts, modifications
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+  deletedAt          DateTime?
+
+  odometerReadings OdometerReading[]
+  trips            Trip[]
+  fuelTransactions FuelTransaction[]
+  chargingSessions ChargingSession[]
+  maintenance      MaintenanceRecord[]
+  expenses         Expense[]
+  batteryHealth    BatteryHealthRecord[]
+  documents        VehicleDocument[]
+  insights         VehicleInsight[]
+
+  @@index([userId])
+}
+
+model OdometerReading {
+  id         String        @id @default(uuid())
+  vehicleId  String
+  vehicle    Vehicle       @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  readAt     DateTime
+  km         Decimal
+  source     ReadingSource
+  confidence Decimal? // 0..1, set when extracted by OCR
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  deletedAt  DateTime?
+
+  @@index([vehicleId, readAt])
+}

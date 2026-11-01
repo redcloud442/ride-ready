@@ -1,0 +1,70 @@
+model FuelTransaction {
+  id            String    @id @default(uuid())
+  vehicleId     String
+  vehicle       Vehicle   @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  filledAt      DateTime
+  odometerKm    Decimal?
+  liters        Decimal
+  pricePerLiter Decimal
+  discount      Decimal   @default(0)
+  totalPaid     Decimal
+  currency      String    @db.Char(3)
+  fullFill      Boolean
+  station       String?
+  receiptId     String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  @@index([vehicleId, filledAt])
+}
+
+model ChargingSession {
+  id           String    @id @default(uuid())
+  vehicleId    String
+  vehicle      Vehicle   @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  startedAt    DateTime
+  odometerKm   Decimal?
+  kwhPurchased Decimal // energy bought, not energy consumed by the vehicle
+  cost         Decimal
+  currency     String    @db.Char(3)
+  chargerType  String?
+  location     String?
+  tariff       String?
+  socStartPct  Decimal?
+  socEndPct    Decimal?
+  receiptId    String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+
+  @@index([vehicleId, startedAt])
+}
+
+model BatteryHealthRecord {
+  id         String    @id @default(uuid())
+  vehicleId  String
+  vehicle    Vehicle   @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  measuredAt DateTime
+  sohPct     Decimal
+  source     String // only record when a supported measurement exists
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+
+  @@index([vehicleId, measuredAt])
+}
+
+model EnergyPriceObservation {
+  id         String   @id @default(uuid())
+  kind       String // fuel grade or electricity tariff
+  price      Decimal
+  currency   String   @db.Char(3)
+  unit       String // L or kWh
+  region     String?
+  source     String
+  observedAt DateTime
+  createdAt  DateTime @default(now())
+
+  @@index([kind, observedAt])
+}

@@ -1,0 +1,19 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.DS_Store
+
+# env / secrets
+.env
+.env.*
+!.env.example
+
+# Claude personal files
+CLAUDE.local.md
+.claude/settings.local.json
+
+# generated
+apps/api/src/generated/
+
+# third-party 3D source models (download per docs/brand/vehicles/README.md)
+docs/brand/vehicles/generic_passenger_car_pack/

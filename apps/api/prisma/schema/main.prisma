@@ -1,0 +1,13 @@
+// Initial data model from RideReady_Product_Plan §6, one file per feature in this folder.
+// Money and quantities are Decimal. Synced rows carry updatedAt + deletedAt (tombstone) for offline sync.
+
+generator client {
+  provider            = "prisma-client"
+  output              = "../../src/generated/prisma"
+  moduleFormat        = "esm"
+  importFileExtension = "ts"
+}
+
+datasource db {
+  provider = "postgresql"
+}

@@ -1,0 +1,68 @@
+{
+  "expo": {
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "name": "RideReady",
+    "slug": "ride-ready",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "rideready",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "icon": "./assets/images/icon.png",
+      "bundleIdentifier": "com.rideready.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#2E2650",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "backgroundImage": "./assets/images/android-icon-background.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "package": "com.rideready.app"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#2E2650",
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 120
+        }
+      ],
+      "expo-secure-store",
+      "expo-web-browser",
+      "expo-localization",
+      "@react-native-community/datetimepicker",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "RideReady uses your location to record the route and distance of trips you start. Nothing is recorded unless you start a trip."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "RideReady attaches receipts, manuals and photos you choose to your vehicle.",
+          "cameraPermission": "RideReady uses the camera to photograph receipts and your odometer, and to scan family invite codes."
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "RideReady uses the camera to photograph receipts and your odometer, and to scan family invite codes.",
+          "recordAudioAndroid": false
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}
