@@ -49,6 +49,7 @@ model Vehicle {
   transfers        VehicleTransfer[]
 
   @@index([userId])
+  @@map("Vehicle")
 }
 
 model OdometerReading {
@@ -64,4 +65,5 @@ model OdometerReading {
   deletedAt  DateTime?
 
   @@index([vehicleId, readAt])
+  @@map("OdometerReading")
 }

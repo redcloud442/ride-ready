@@ -1,0 +1,18 @@
+# Store builds, started by hand: `npx eas-cli@latest workflow:run .eas/workflows/production.yml`.
+# No submit step: Google Play's first upload must be done by hand, and store releases stay a manual decision.
+name: Production build
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  build_android:
+    type: build
+    params:
+      platform: android
+      profile: production
+  build_ios:
+    type: build
+    params:
+      platform: ios
+      profile: production

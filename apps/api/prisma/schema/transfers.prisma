@@ -13,4 +13,5 @@ model VehicleTransfer {
   createdAt       DateTime  @default(now())
 
   @@index([vehicleId])
+  @@map("VehicleTransfer")
 }

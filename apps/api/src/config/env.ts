@@ -22,6 +22,9 @@ export const env = {
     accessKey: required("S3_ACCESS_KEY"),
     secretKey: required("S3_SECRET_KEY"),
     bucket: process.env.S3_BUCKET || "ride-ready-private",
+    region: process.env.S3_REGION || "us-east-1",
+    // MinIO needs path-style URLs; Railway buckets (Tigris) use virtual-hosted ones
+    pathStyle: process.env.S3_PATH_STYLE !== "false",
   },
   google:
     process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET

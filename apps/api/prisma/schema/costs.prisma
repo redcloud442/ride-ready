@@ -12,4 +12,5 @@ model Expense {
   deletedAt DateTime?
 
   @@index([vehicleId, paidAt])
+  @@map("Expense")
 }

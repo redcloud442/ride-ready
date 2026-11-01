@@ -8,4 +8,6 @@ model VehicleInsight {
   confidence        Decimal?
   supportingRecords Json     @default("[]") // ids of records the claim is traceable to
   createdAt         DateTime @default(now())
+
+  @@map("VehicleInsight")
 }

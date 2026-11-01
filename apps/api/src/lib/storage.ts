@@ -15,8 +15,8 @@ import { env } from "../config/env.ts";
 const client = (endpoint: string) =>
   new S3Client({
     endpoint,
-    region: "us-east-1", // MinIO ignores it; the SDK requires one
-    forcePathStyle: true,
+    region: env.s3.region,
+    forcePathStyle: env.s3.pathStyle,
     credentials: { accessKeyId: env.s3.accessKey, secretAccessKey: env.s3.secretKey },
   });
 

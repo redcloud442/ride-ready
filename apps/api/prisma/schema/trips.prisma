@@ -18,4 +18,5 @@ model Trip {
   deletedAt DateTime?
 
   @@index([vehicleId, startedAt])
+  @@map("Trip")
 }

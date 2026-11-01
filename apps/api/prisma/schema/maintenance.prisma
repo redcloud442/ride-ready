@@ -16,4 +16,5 @@ model MaintenanceRecord {
   deletedAt   DateTime?
 
   @@index([vehicleId, performedAt])
+  @@map("MaintenanceRecord")
 }

@@ -8,7 +8,9 @@
       "developmentClient": true,
       "distribution": "internal",
       "android": { "buildType": "apk" },
-      "env": { "EXPO_PUBLIC_API_URL": "http://192.168.1.4:3000" }
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://api-production-e4bb.up.railway.app"
+      }
     },
     "preview": {
       "distribution": "internal",
@@ -17,7 +19,14 @@
     },
     "production": {
       "autoIncrement": true,
-      "env": { "EXPO_PUBLIC_API_URL": "https://api.example.com" }
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://api-production-e4bb.up.railway.app"
+      }
+    },
+    "production-apk": {
+      "extends": "production",
+      "distribution": "internal",
+      "android": { "buildType": "apk" }
     }
   },
   "submit": {

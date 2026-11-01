@@ -12,7 +12,7 @@ model Organization {
   invitations Invitation[]
 
   @@unique([slug])
-  @@map("organization")
+  @@map("Organization")
 }
 
 model Member {
@@ -26,7 +26,7 @@ model Member {
 
   @@index([organizationId])
   @@index([userId])
-  @@map("member")
+  @@map("Member")
 }
 
 model Invitation {
@@ -43,5 +43,5 @@ model Invitation {
 
   @@index([organizationId])
   @@index([email])
-  @@map("invitation")
+  @@map("Invitation")
 }

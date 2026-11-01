@@ -1,0 +1,17 @@
+# Test APK for every app change on main (install link appears on expo.dev).
+# shortcut: Android only; add an ios build job once the Apple account and test devices are registered.
+name: Preview build
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - apps/mobile/**
+      - packages/core/**
+
+jobs:
+  build_android:
+    type: build
+    params:
+      platform: android
+      profile: preview

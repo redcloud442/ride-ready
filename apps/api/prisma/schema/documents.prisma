@@ -12,4 +12,5 @@ model VehicleDocument {
   deletedAt  DateTime?
 
   @@index([vehicleId, createdAt])
+  @@map("VehicleDocument")
 }

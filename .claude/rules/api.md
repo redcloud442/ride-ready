@@ -73,7 +73,7 @@ src/
   config `prisma.config.ts` (loads `.env` itself).
 - Workflow: edit schema → `pnpm --filter api db:migrate --name <change>` (generate + migrate dev).
   Never `db push`, never edit migration SQL or `src/generated/` by hand.
-- Better Auth owns `User`, `Session`, `Account`, `Verification` (`@@map` lowercase). After changing
+- Better Auth owns `User`, `Session`, `Account`, `Verification` (tables named like every other: `@@map("<Model>")`, PascalCase; `auth:generate` writes lowercase maps, put them back). After changing
   auth plugins run `pnpm --filter api auth:generate`, then `db:migrate`. Extra `User` fields are ours
   (`preferences`, `onboardedAt`, `vehicles`).
 - Synced user records carry `createdAt`, `updatedAt`, `deletedAt` (tombstone for offline sync — soft
