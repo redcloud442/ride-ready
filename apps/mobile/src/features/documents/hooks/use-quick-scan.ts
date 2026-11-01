@@ -4,7 +4,7 @@ import { useUploadDocument } from '@/hooks/use-documents';
 import { canReadText } from '@/lib/ocr';
 import { useToastStore } from '@/stores/toast.store';
 
-import { usePickFile } from './use-pick-file';
+import { usePickFile } from '@/hooks/use-pick-file';
 import { useScanReceipt } from './use-scan-receipt';
 
 // One tap from Home or the quick-add sheet: photo → saved as a receipt document → read → prefilled log form to confirm.

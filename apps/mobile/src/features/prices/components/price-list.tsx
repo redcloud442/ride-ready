@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { Chip, Divider, Icon, Surface, Text } from 'react-native-paper';
 
+import { Appear } from '@/components/ui/appear';
 import { ErrorBanner } from '@/components/ui/error-banner';
 import { InfoCard } from '@/components/ui/info-card';
 import { defaultEnergyKind, ENERGY_KIND_UI } from '@/constants/energy-prices';
@@ -42,33 +43,36 @@ export function PriceList() {
       ) : !prices.data?.length ? (
         <InfoCard icon="tag-outline" title="No reports yet" body={`Be the first to report a ${ENERGY_KIND_UI[kind].label.toLowerCase()} price.`} />
       ) : (
-        <Surface elevation={1} style={[styles.card, { borderColor: colors.outlineVariant }]}>
-          {prices.data.map((p, i) => {
-            const seen = new Date(p.observedAt);
-            return (
-              <View key={p.id}>
-                {i > 0 && <Divider />}
-                <View
-                  style={styles.row}
-                  accessible
-                  accessibilityLabel={`${formatMoney(Number(p.price), p.currency)} per ${p.unit}${p.region ? `, ${p.region}` : ''}, seen ${formatDay(seen)} ${formatTime(seen)}`}>
-                  <View style={styles.flex}>
-                    <Text variant="titleMedium" style={styles.num}>
-                      {formatMoney(Number(p.price), p.currency)}
-                      <Text variant="bodyMedium" style={{ color: colors.onSurfaceVariant }}>
-                        {' '}
-                        / {p.unit}
+        // keyed by kind so switching fuel type builds the list in again
+        <Appear key={kind} index={1}>
+          <Surface elevation={1} style={[styles.card, { borderColor: colors.outlineVariant }]}>
+            {prices.data.map((p, i) => {
+              const seen = new Date(p.observedAt);
+              return (
+                <View key={p.id}>
+                  {i > 0 && <Divider />}
+                  <View
+                    style={styles.row}
+                    accessible
+                    accessibilityLabel={`${formatMoney(Number(p.price), p.currency)} per ${p.unit}${p.region ? `, ${p.region}` : ''}, seen ${formatDay(seen)} ${formatTime(seen)}`}>
+                    <View style={styles.flex}>
+                      <Text variant="titleMedium" style={styles.num}>
+                        {formatMoney(Number(p.price), p.currency)}
+                        <Text variant="bodyMedium" style={{ color: colors.onSurfaceVariant }}>
+                          {' '}
+                          / {p.unit}
+                        </Text>
                       </Text>
-                    </Text>
-                    <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
-                      {[p.region, `seen ${formatDay(seen)} ${formatTime(seen)}`].filter(Boolean).join(' · ')}
-                    </Text>
+                      <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
+                        {[p.region, `seen ${formatDay(seen)} ${formatTime(seen)}`].filter(Boolean).join(' · ')}
+                      </Text>
+                    </View>
                   </View>
                 </View>
-              </View>
-            );
-          })}
-        </Surface>
+              );
+            })}
+          </Surface>
+        </Appear>
       )}
     </ScrollView>
   );

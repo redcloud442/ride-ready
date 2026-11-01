@@ -35,5 +35,17 @@ export const routes = {
   family: '/family' as Href,
   scanInvite: '/family/scan' as Href,
   invite: (id: string) => `/invite/${id}` as Href,
+  transferVehicle: (vehicleId: string) => `/vehicle/transfer?vehicleId=${vehicleId}` as Href,
+  scanTransfer: '/vehicle/scan' as Href,
+  transfer: (id: string) => `/transfer/${id}` as Href,
   newPrice: '/prices/new' as Href,
 };
+
+/** The screen for a scanned rideready:// link (family invite or vehicle transfer), or null for anything else. */
+export function routeFromLink(data: string): Href | null {
+  const page = /^https?:\/\/[^/\s]+\/t\/([0-9a-f-]{36})$/i.exec(data.trim()); // transferLink's https form
+  if (page) return routes.transfer(page[1]);
+  const m = /^rideready:\/\/(invite|transfer)\/([A-Za-z0-9_-]{8,64})$/.exec(data.trim());
+  if (!m) return null;
+  return m[1] === 'invite' ? routes.invite(m[2]) : routes.transfer(m[2]);
+}

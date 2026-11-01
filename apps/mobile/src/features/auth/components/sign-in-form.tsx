@@ -22,7 +22,7 @@ export function SignInForm() {
     <View>
       <FormTextInput
         control={control}
-        name="email"
+        name="email" placeholder="you@example.com"
         label="Email"
         autoCapitalize="none"
         autoComplete="email"
@@ -32,7 +32,7 @@ export function SignInForm() {
       />
       <PasswordInput
         control={control}
-        name="password"
+        name="password" placeholder="Your password"
         label="Password"
         autoComplete="current-password"
         textContentType="password"

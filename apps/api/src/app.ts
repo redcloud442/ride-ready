@@ -13,6 +13,7 @@ import { odometerRoutes } from "./modules/odometer/odometer.routes.ts";
 import { onboardingRoutes } from "./modules/onboarding/onboarding.routes.ts";
 import { profileRoutes } from "./modules/profile/profile.routes.ts";
 import { statsRoutes } from "./modules/stats/stats.routes.ts";
+import { transferLinkRoutes, transfersRoutes } from "./modules/transfers/transfers.routes.ts";
 import { tripsRoutes } from "./modules/trips/trips.routes.ts";
 import { vehiclesRoutes } from "./modules/vehicles/vehicles.routes.ts";
 import { authRoutes } from "./plugins/auth.ts";
@@ -49,6 +50,8 @@ export async function buildApp() {
   await app.register(onboardingRoutes, { prefix: "/api/onboarding" });
   await app.register(profileRoutes, { prefix: "/api/profile" });
   await app.register(energyPricesRoutes, { prefix: "/api/energy-prices" });
+  await app.register(transfersRoutes, { prefix: "/api/transfers" });
+  await app.register(transferLinkRoutes, { prefix: "/t" });
 
   // records of one vehicle; access (owner or family member) is checked once per request in plugins/vehicle-records.ts
   const records = "/api/vehicles/:vehicleId";

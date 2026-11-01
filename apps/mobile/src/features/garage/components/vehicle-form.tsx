@@ -51,10 +51,10 @@ export function VehicleForm() {
         <ImageChoiceGrid control={control} name="propulsion" label="Powertrain" options={PROPULSION_OPTIONS} shape="square" />
         <FormTextInput control={control} name="make" label="Make" placeholder="e.g. Honda" autoCapitalize="words" maxLength={60} />
         <FormTextInput control={control} name="model" label="Model" placeholder="e.g. CB500X" autoCapitalize="words" maxLength={60} />
-        <FormTextInput control={control} name="year" label="Year" keyboardType="number-pad" maxLength={4} />
+        <FormTextInput control={control} name="year" placeholder="e.g. 2021" label="Year" keyboardType="number-pad" maxLength={4} />
         <FormTextInput
           control={control}
-          name="odometerKm"
+          name="odometerKm" placeholder="e.g. 45200"
           label="Current odometer (optional)"
           keyboardType="decimal-pad"
           right={<TextInput.Affix text="km" />}

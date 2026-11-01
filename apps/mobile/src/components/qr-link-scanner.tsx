@@ -4,14 +4,14 @@ import { useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 
-import { routes } from '@/constants/routes';
+import { routeFromLink } from '@/constants/routes';
 import { useToastStore } from '@/stores/toast.store';
 import { useAppTheme } from '@/theme';
 
-import { invitationIdFrom } from '../family.schemas';
+type Props = { hint: string; why: string };
 
-// Camera that reads an invite QR code and opens the invitation.
-export function InviteScanner() {
+// Camera that reads a RideReady QR code (family invite or vehicle transfer) and opens its screen.
+export function QrLinkScanner({ hint, why }: Props) {
   const { colors } = useAppTheme();
   const [permission, requestPermission] = useCameraPermissions();
   const show = useToastStore((s) => s.show);
@@ -22,7 +22,7 @@ export function InviteScanner() {
     return (
       <View style={[styles.center, { backgroundColor: colors.background }]}>
         <Text variant="bodyLarge" style={styles.text}>
-          RideReady needs the camera to scan a family invite.
+          {why}
         </Text>
         <Button mode="contained" onPress={requestPermission}>
           Allow camera
@@ -39,17 +39,17 @@ export function InviteScanner() {
         barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
         onBarcodeScanned={({ data }) => {
           if (handled.current) return;
-          const id = invitationIdFrom(data);
-          if (!id) {
-            show("That isn't a RideReady invite.");
+          const href = routeFromLink(data);
+          if (!href) {
+            show("That isn't a RideReady code.");
             return;
           }
           handled.current = true;
-          router.replace(routes.invite(id));
+          router.replace(href);
         }}
       />
       <Text variant="bodyLarge" style={[styles.hint, { color: colors.onPrimary, backgroundColor: colors.primary }]}>
-        Point at the invite QR code
+        {hint}
       </Text>
     </View>
   );

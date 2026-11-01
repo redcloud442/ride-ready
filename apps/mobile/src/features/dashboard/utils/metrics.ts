@@ -4,9 +4,13 @@ import {
   distanceInPeriod,
   fuelEconomyL100km,
   latestOdometer,
+  maintenanceForecast,
   monthOf,
   monthlyTotals,
+  RECURRING_MAINTENANCE_KINDS,
   spendByCurrency,
+  type MaintenanceForecast,
+  type MaintenanceKind,
   type MetricQuality,
   type OdometerPoint,
   type Propulsion,
@@ -26,6 +30,8 @@ export type VehicleMetrics = {
   counts: { odometer: number; energy: number; service: number; expense: number };
   /** last 6 calendar months of spend in `currency` (oldest first); null when nothing was spent */
   trend: { currency: string; months: { start: Date; total: number }[] } | null;
+  /** next visit per recurring kind, detected from the vehicle's own maintenance history */
+  forecasts: { kind: MaintenanceKind; forecast: MaintenanceForecast }[];
 };
 
 function spendItems(r: VehicleRecords): SpendItem[] {
@@ -80,7 +86,16 @@ export function buildMetrics(r: VehicleRecords, propulsion: Propulsion, now = ne
   const trendCurrency = totals[0]?.[0] ?? mostUsedCurrency(items);
   const months = trendCurrency ? monthlyTotals(items, trendCurrency, 6, now) : [];
 
+  const forecasts = RECURRING_MAINTENANCE_KINDS.flatMap((kind) => {
+    const visits = r.maintenance
+      .filter((m) => m.kind === kind)
+      .map((m) => ({ at: new Date(m.performedAt), km: toNumber(m.odometerKm) }));
+    const forecast = maintenanceForecast(visits, points, now);
+    return forecast ? [{ kind, forecast }] : [];
+  });
+
   return {
+    forecasts,
     latestOdometer: latestOdometer(points),
     trend: trendCurrency && months.some((m) => m.total > 0) ? { currency: trendCurrency, months } : null,
     monthDistanceKm,

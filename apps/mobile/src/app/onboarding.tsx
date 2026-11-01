@@ -3,6 +3,7 @@ import { Button, HelperText } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { bodyStyleOptions, PROPULSION_OPTIONS, TYPE_OPTIONS } from '@/constants/vehicles';
+import { Appear } from '@/components/ui/appear';
 import { ColorSwatches } from '@/components/ui/color-swatches';
 import { ChoiceStep } from '@/features/onboarding/components/choice-step';
 import { DetailsStep } from '@/features/onboarding/components/details-step';
@@ -24,39 +25,42 @@ export default function OnboardingScreen() {
       <OnboardingHeader index={flow.index} total={flow.total} onBack={flow.back} onSkip={flow.skip} skipDisabled={flow.saving} />
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-          {flow.step === 'welcome' && <WelcomeStep name={firstName(session?.user.name)} />}
-          {flow.step === 'type' && (
-            <ChoiceStep
-              control={control}
-              name="type"
-              title="What do you ride?"
-              subtitle="You can add more vehicles later in Garage."
-              options={TYPE_OPTIONS}
-            />
-          )}
-          {flow.step === 'bodyStyle' && (
-            <>
+          {/* keyed by step so each step builds in */}
+          <Appear key={flow.step}>
+            {flow.step === 'welcome' && <WelcomeStep name={firstName(session?.user.name)} />}
+            {flow.step === 'type' && (
               <ChoiceStep
                 control={control}
-                name="bodyStyle"
-                title="Which one looks like yours?"
-                subtitle="Pick the shape and color for its picture. You can change both later."
-                options={bodyStyleOptions(flow.type, flow.color)}
+                name="type"
+                title="What do you ride?"
+                subtitle="You can add more vehicles later in Garage."
+                options={TYPE_OPTIONS}
               />
-              <ColorSwatches control={control} name="color" label="Color" />
-            </>
-          )}
-          {flow.step === 'propulsion' && (
-            <ChoiceStep
-              control={control}
-              name="propulsion"
-              title="How is it powered?"
-              subtitle="This decides whether you log fuel, charging, or both."
-              options={PROPULSION_OPTIONS}
-              shape="square"
-            />
-          )}
-          {flow.step === 'details' && <DetailsStep control={control} onSubmit={flow.finish} />}
+            )}
+            {flow.step === 'bodyStyle' && (
+              <>
+                <ChoiceStep
+                  control={control}
+                  name="bodyStyle"
+                  title="Which one looks like yours?"
+                  subtitle="Pick the shape and color for its picture. You can change both later."
+                  options={bodyStyleOptions(flow.type, flow.color)}
+                />
+                <ColorSwatches control={control} name="color" label="Color" />
+              </>
+            )}
+            {flow.step === 'propulsion' && (
+              <ChoiceStep
+                control={control}
+                name="propulsion"
+                title="How is it powered?"
+                subtitle="This decides whether you log fuel, charging, or both."
+                options={PROPULSION_OPTIONS}
+                shape="square"
+              />
+            )}
+            {flow.step === 'details' && <DetailsStep control={control} onSubmit={flow.finish} />}
+          </Appear>
           {flow.error && (
             <HelperText type="error" visible accessibilityLiveRegion="polite">
               {flow.error}

@@ -57,7 +57,7 @@ export function PriceForm() {
         <ChipSelect control={control} name="kind" label="For" options={KIND_OPTIONS} />
         <FormTextInput
           control={control}
-          name="price"
+          name="price" placeholder="e.g. 1.85"
           label="Price"
           keyboardType="decimal-pad"
           right={<TextInput.Affix text={`${currency} / ${ENERGY_KIND_UI[kind].unit}`} />}

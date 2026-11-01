@@ -141,6 +141,7 @@ type BrandTokens = {
   onBrandMuted: string;
   accent: string;
   motif: string;
+  splash: string;
 };
 
 export type AppTheme = MD3Theme & { brand: BrandTokens };
@@ -153,6 +154,7 @@ const lightApp: AppTheme = {
     onBrandMuted: '#F0EEF7',
     accent: '#5EEAD4',
     motif: 'rgba(255,255,255,0.08)',
+    splash: '#2E2650', // = app.json splash backgroundColor, so the boot loader takes over without a flash
   },
 };
 
@@ -164,6 +166,7 @@ const darkApp: AppTheme = {
     onBrandMuted: '#D6D1E6',
     accent: '#5EEAD4',
     motif: 'rgba(255,255,255,0.06)',
+    splash: '#2E2650',
   },
 };
 

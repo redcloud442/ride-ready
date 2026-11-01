@@ -196,6 +196,103 @@ export function distanceInPeriod(points: OdometerPoint[], { start, end }: Period
   return km > 0 ? km : null;
 }
 
+/** Readings lower than an earlier one: typos or a replaced odometer. Flagged for the owner, never corrected. */
+export function odometerDecreases(points: OdometerPoint[]): OdometerPoint[] {
+  const out: OdometerPoint[] = [];
+  let max = -Infinity;
+  for (const p of [...points].sort((a, b) => a.at.getTime() - b.at.getTime())) {
+    if (p.km < max) out.push(p);
+    else max = p.km;
+  }
+  return out;
+}
+
+/**
+ * Average km per day from odometer values in the last `windowDays`: first to last value, at least 14
+ * days apart. null without that span.
+ */
+export function dailyDistanceKm(points: OdometerPoint[], now = new Date(), windowDays = 180): number | null {
+  const recent = points.filter((p) => p.at <= now && now.getTime() - p.at.getTime() <= windowDays * DAY_MS);
+  const last = latestOdometer(recent);
+  const first = recent.reduce<OdometerPoint | null>((a, p) => (!a || p.at < a.at ? p : a), null);
+  if (!first || !last) return null;
+  const days = (last.at.getTime() - first.at.getTime()) / DAY_MS;
+  const km = last.km - first.km;
+  return days >= 14 && km > 0 ? km / days : null;
+}
+
+// ---------------------------------------------------------------------------------------------
+// Maintenance forecast: intervals detected from the owner's own visits, never a default table.
+
+/** Kinds that come back on a schedule. Repairs and "other" don't, so they are never forecast. */
+export const RECURRING_MAINTENANCE_KINDS = ['service', 'inspection', 'tires'] as const;
+
+export type ServiceVisit = { at: Date; km: number | null };
+
+export type MaintenanceForecast = {
+  /** typical gap between visits (median); km is null when visits lack odometer values */
+  intervalDays: number;
+  intervalKm: number | null;
+  /** distinct visits the intervals come from */
+  basedOn: number;
+  dueKm: number | null;
+  /** from the latest odometer value; negative = overdue */
+  kmLeft: number | null;
+  /** earlier of: last visit + interval days, or when the km interval runs out at the recent pace */
+  dueAt: Date;
+  kmPerDay: number | null;
+  quality: 'estimated';
+};
+
+const median = (xs: number[]) => {
+  const s = [...xs].sort((a, b) => a - b);
+  const m = s.length >> 1;
+  return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+};
+
+/**
+ * When the next visit of one recurring kind is due, from the owner's past visits of that kind (median
+ * gap, so one odd visit doesn't skew it). Needs two visits at least a week apart; null otherwise.
+ */
+export function maintenanceForecast(visits: ServiceVisit[], odometer: OdometerPoint[], now = new Date()): MaintenanceForecast | null {
+  // a visit within a week of the previous one is the same job (logged twice, or a follow-up)
+  const distinct: ServiceVisit[] = [];
+  for (const v of [...visits].sort((a, b) => a.at.getTime() - b.at.getTime())) {
+    const prev = distinct[distinct.length - 1];
+    if (!prev || v.at.getTime() - prev.at.getTime() >= 7 * DAY_MS) distinct.push(v);
+  }
+  if (distinct.length < 2) return null;
+
+  const gapsDays: number[] = [];
+  const gapsKm: number[] = [];
+  for (let i = 1; i < distinct.length; i++) {
+    const [a, b] = [distinct[i - 1], distinct[i]];
+    gapsDays.push((b.at.getTime() - a.at.getTime()) / DAY_MS);
+    if (a.km != null && b.km != null && b.km > a.km) gapsKm.push(b.km - a.km);
+  }
+  const intervalDays = Math.round(median(gapsDays));
+  const intervalKm = gapsKm.length ? Math.round(median(gapsKm)) : null;
+
+  const last = distinct[distinct.length - 1];
+  const current = latestOdometer(odometer);
+  const kmPerDay = dailyDistanceKm(odometer, now);
+  const dueKm = intervalKm != null && last.km != null ? last.km + intervalKm : null;
+  const kmLeft = dueKm != null && current ? dueKm - current.km : null;
+  const byTime = new Date(last.at.getTime() + intervalDays * DAY_MS);
+  const byKm = kmLeft != null && kmPerDay && current ? new Date(current.at.getTime() + (kmLeft / kmPerDay) * DAY_MS) : null;
+
+  return {
+    intervalDays,
+    intervalKm,
+    basedOn: distinct.length,
+    dueKm,
+    kmLeft,
+    dueAt: byKm && byKm < byTime ? byKm : byTime,
+    kmPerDay,
+    quality: 'estimated',
+  };
+}
+
 export type SpendItem = { at: Date; amount: number; currency: string };
 
 /** Totals per currency for a period. Currencies are never converted or mixed. */
@@ -667,6 +764,17 @@ function receiptDate(text: string): { value: string | null; ambiguous: boolean }
 }
 
 /**
+ * The odometer on OCR text of a dashboard photo: the largest whole number (trip meters are shorter or
+ * have a decimal; clocks and temperatures are short). Miles are converted to km. null when none.
+ */
+export function odometerFromText(text: string): number | null {
+  const candidates = [...text.matchAll(/\b(\d{1,3}(?:[ ,.]\d{3})+|\d{3,7})\b(?![.,]\d)/g)].map((m) => Number(m[1].replace(/\D/g, '')));
+  if (!candidates.length) return null;
+  const max = Math.max(...candidates);
+  return /\b(mi|miles)\b/i.test(text) ? Math.round(max * 1.609344) : max;
+}
+
+/**
  * Reads on-device OCR text (lines or blocks) of a fuel/charging receipt, service invoice or odometer
  * photo. Keyword and pattern based: anything not found stays null, never guessed, and the user
  * confirms every value. Station, location and workshop names are left to the user.
@@ -696,15 +804,9 @@ export function readReceiptText(lines: string[]): Omit<DocumentExtraction, 'docu
     ? null
     : labelledAmount(clean, /\b(total|amount due|amount|to pay|sale)\b/i, /\b(sub\s?total|vat|tax|net)\b/i);
 
-  let odometerKm: number | null = null;
-  if (isOdometer) {
-    // the odometer is the longest whole number on the photo; trip meters are shorter or have a decimal
-    const candidates = [...text.matchAll(/\b(\d{1,3}(?:[ ,.]\d{3})+|\d{3,7})\b(?![.,]\d)/g)].map((m) => Number(m[1].replace(/\D/g, '')));
-    const max = candidates.length ? Math.max(...candidates) : null;
-    odometerKm = max == null ? null : /\b(mi|miles)\b/i.test(text) ? Math.round(max * 1.609344) : max;
-  } else {
-    odometerKm = labelledAmount(clean, /\b(odometer|odo|mileage|kilometerstand|km stand)\b/i);
-  }
+  const odometerKm = isOdometer
+    ? odometerFromText(text)
+    : labelledAmount(clean, /\b(odometer|odo|mileage|kilometerstand|km stand)\b/i);
 
   const fuel = isFuel
     ? {
@@ -822,4 +924,20 @@ export type EnergyPriceObservation = {
   source: string;
   observedAt: string;
   createdAt: string;
+};
+
+// ---------------------------------------------------------------------------------------------
+// Vehicle transfer (/api/transfers): the car, its records and files go to the next owner via a QR code.
+
+export type VehicleTransferPreview = {
+  id: string;
+  expiresAt: string;
+  acceptedAt: string | null;
+  includeReceipts: boolean;
+  includeCosts: boolean;
+  /** the signed-in user is the seller */
+  mine: boolean;
+  vehicle: Omit<VehicleSummary, 'shared'>;
+  /** what the next owner receives; trips never move */
+  counts: { maintenance: number; odometer: number; fuel: number; charging: number; expenses: number; documents: number };
 };

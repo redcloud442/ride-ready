@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
-import { FAB } from 'react-native-paper';
+import { Button, FAB } from 'react-native-paper';
 
 import { routes } from '@/constants/routes';
 import { Appear } from '@/components/ui/appear';
@@ -34,6 +34,11 @@ export default function GarageScreen() {
             <InfoCard icon="garage-open-variant" tone="primary" title="Your garage is empty" body="Add a car or motorcycle to start tracking it." />
           )
         )}
+        {vehicles.isSuccess && (
+          <Button icon="qrcode-scan" onPress={() => router.push(routes.scanTransfer)} style={styles.scan}>
+            Bought a car from a RideReady user? Scan its code
+          </Button>
+        )}
       </ScrollView>
       <FAB icon="plus" label="Add vehicle" style={styles.fab} onPress={() => router.push(routes.newVehicle)} />
     </View>
@@ -44,5 +49,6 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   content: { padding: 16, gap: 12, paddingBottom: 96 },
   loading: { height: 120 },
+  scan: { alignSelf: 'center' },
   fab: { position: 'absolute', right: 16, bottom: 16 },
 });

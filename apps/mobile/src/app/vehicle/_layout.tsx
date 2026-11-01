@@ -12,6 +12,8 @@ export default function VehicleLayout() {
       <Stack.Screen name="new" options={{ title: 'Add vehicle', ...modal }} />
       <Stack.Screen name="edit" options={{ title: 'Edit vehicle', ...modal }} />
       <Stack.Screen name="document" options={{ title: 'Add document', ...modal }} />
+      <Stack.Screen name="transfer" options={{ title: 'Transfer to new owner', ...modal }} />
+      <Stack.Screen name="scan" options={{ title: 'Scan transfer code', ...modal }} />
     </Stack>
   );
 }

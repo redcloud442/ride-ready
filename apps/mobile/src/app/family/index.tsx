@@ -1,7 +1,8 @@
 import { router } from 'expo-router';
-import { ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, StyleSheet } from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, RefreshControl, ScrollView, StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
 
+import { Appear } from '@/components/ui/appear';
 import { ErrorBanner } from '@/components/ui/error-banner';
 import { FormSection } from '@/components/ui/form-section';
 import { routes } from '@/constants/routes';
@@ -17,25 +18,28 @@ export default function FamilyScreen() {
 
   return (
     <KeyboardAvoidingView style={[styles.flex, { backgroundColor: colors.background }]} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <ScrollView contentContainerStyle={styles.content} keyboardDismissMode="on-drag" keyboardShouldPersistTaps="handled">
+      <ScrollView contentContainerStyle={styles.content} keyboardDismissMode="on-drag" keyboardShouldPersistTaps="handled"
+        refreshControl={<RefreshControl refreshing={family.isRefetching} onRefresh={() => void family.refetch()} tintColor={colors.primary} />}>
         <InvitationsForMe />
         {family.isPending && <ActivityIndicator />}
         {family.error && <ErrorBanner message={family.error.message} onRetry={() => family.refetch()} />}
         {family.data && (
           <>
-            <FormSection title="People with access to your garage">
+            <FormSection title="People with access to your garage" index={1}>
               <MyFamily family={family.data.own} />
             </FormSection>
             {family.data.joined.length > 0 && (
-              <FormSection title="Garages shared with you">
+              <FormSection title="Garages shared with you" index={2}>
                 <JoinedFamilies families={family.data.joined} />
               </FormSection>
             )}
           </>
         )}
-        <Button mode="outlined" icon="qrcode-scan" onPress={() => router.push(routes.scanInvite)}>
-          Scan an invite
-        </Button>
+        <Appear index={3}>
+          <Button mode="outlined" icon="qrcode-scan" onPress={() => router.push(routes.scanInvite)}>
+            Scan an invite
+          </Button>
+        </Appear>
       </ScrollView>
     </KeyboardAvoidingView>
   );

@@ -33,7 +33,7 @@ export function InviteForm({ organizationId, onInvited }: Props) {
     <>
       <FormTextInput
         control={control}
-        name="email"
+        name="email" placeholder="partner@example.com"
         label="Their email"
         keyboardType="email-address"
         autoCapitalize="none"

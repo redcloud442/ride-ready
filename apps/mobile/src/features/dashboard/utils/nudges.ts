@@ -1,8 +1,9 @@
 import type { Propulsion, VehicleDocument } from '@ride-ready/core';
 
 import { DOCUMENT_KIND_UI } from '@/constants/documents';
+import { MAINTENANCE_KIND_UI } from '@/constants/records';
 import { daysUntil, expiryStatus } from '@/features/documents/utils/expiry';
-import { formatDate } from '@/utils/format';
+import { formatDate, formatKm, formatNumber } from '@/utils/format';
 
 import type { VehicleMetrics } from './metrics';
 
@@ -16,6 +17,9 @@ export type Nudge = {
 
 const DAY = 86_400_000;
 export const ODOMETER_STALE_DAYS = 30;
+// a forecast shows on Home once it's this close (either one)
+const SERVICE_SOON_DAYS = 45;
+const SERVICE_SOON_KM = 1500;
 
 /** Short, data-backed reminders for Home, most urgent first. Every one is derived from records. */
 export function buildNudges(
@@ -34,6 +38,26 @@ export function buildNudges(
         ? { key: `doc-${d.id}`, icon: 'alert-circle-outline', tone: 'error', title: `${label} expired`, body: `On ${formatDate(new Date(d.expiresAt!))}. Renew it and add the new document.` }
         : { key: `doc-${d.id}`, icon: DOCUMENT_KIND_UI[d.kind].icon, tone: 'tertiary', title: `${label} expires in ${days} ${days === 1 ? 'day' : 'days'}`, body: `On ${formatDate(new Date(d.expiresAt!))}.` },
     );
+  }
+
+  for (const { kind, forecast: f } of metrics?.forecasts ?? []) {
+    const days = Math.ceil((f.dueAt.getTime() - now.getTime()) / DAY);
+    const overdue = days < 0 || (f.kmLeft != null && f.kmLeft <= 0);
+    if (!overdue && days > SERVICE_SOON_DAYS && (f.kmLeft == null || f.kmLeft > SERVICE_SOON_KM)) continue;
+    const label = MAINTENANCE_KIND_UI[kind].label;
+    const every = [
+      f.intervalKm != null ? formatKm(f.intervalKm) : null,
+      f.intervalDays >= 60 ? `${Math.round(f.intervalDays / 30.4)} months` : `${f.intervalDays} days`,
+    ].filter(Boolean).join(' or ');
+    const left = f.kmLeft == null ? '' : f.kmLeft > 0 ? `About ${formatKm(f.kmLeft)} to go. ` : `${formatKm(-f.kmLeft)} past it. `;
+    const pace = f.kmPerDay ? ` and ~${formatNumber(f.kmPerDay)} km a day` : '';
+    nudges.push({
+      key: `service-${kind}`,
+      icon: MAINTENANCE_KIND_UI[kind].icon,
+      tone: overdue ? 'error' : 'tertiary',
+      title: overdue ? `${label} likely due now` : `${label} due around ${formatDate(f.dueAt)}`,
+      body: `${left}Estimated from your last ${f.basedOn} visits (every ${every})${pace}.`,
+    });
   }
 
   const last = metrics?.latestOdometer;

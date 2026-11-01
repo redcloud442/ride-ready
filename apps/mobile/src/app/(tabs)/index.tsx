@@ -3,6 +3,7 @@ import { Text } from 'react-native-paper';
 
 import { Appear } from '@/components/ui/appear';
 import { ErrorBanner } from '@/components/ui/error-banner';
+import { OfflineBanner } from '@/components/ui/offline-banner';
 import { DashboardHeader, HERO_OVERLAP } from '@/features/dashboard/components/dashboard-header';
 import { EmptyGarageCard } from '@/features/dashboard/components/empty-garage-card';
 import { LogActions } from '@/features/dashboard/components/log-actions';
@@ -40,6 +41,7 @@ export default function HomeScreen() {
             vehicles.isSuccess && <EmptyGarageCard />
           )}
         </View>
+        <OfflineBanner />
         {(vehicles.isError || records.isError) && (
           <ErrorBanner message="Couldn't load everything in your garage." onRetry={refresh} />
         )}

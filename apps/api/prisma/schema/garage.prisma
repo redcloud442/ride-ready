@@ -46,6 +46,7 @@ model Vehicle {
   batteryHealth    BatteryHealthRecord[]
   documents        VehicleDocument[]
   insights         VehicleInsight[]
+  transfers        VehicleTransfer[]
 
   @@index([userId])
 }

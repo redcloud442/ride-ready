@@ -34,7 +34,7 @@ export function CurrencyForm({ onDone }: { onDone?: () => void }) {
     <>
       <FormTextInput
         control={control}
-        name="currency"
+        name="currency" placeholder="e.g. EUR"
         label="Currency"
         autoCapitalize="characters"
         autoCorrect={false}

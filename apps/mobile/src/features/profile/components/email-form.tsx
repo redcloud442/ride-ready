@@ -43,7 +43,7 @@ export function EmailForm({ onDone }: { onDone?: () => void }) {
     <>
       <FormTextInput
         control={control}
-        name="newEmail"
+        name="newEmail" placeholder="new@example.com"
         label="New email"
         keyboardType="email-address"
         autoCapitalize="none"

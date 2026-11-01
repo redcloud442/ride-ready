@@ -14,7 +14,7 @@ import { request } from './client';
 // Request bodies mirror the zod schemas in apps/api/src/modules/<feature>/<feature>.schema.ts.
 // Numbers are JSON numbers, dates ISO strings; responses carry decimals as strings (see @ride-ready/core).
 
-export type CreateOdometerInput = { readAt: string; km: number };
+export type CreateOdometerInput = { readAt: string; km: number; source?: 'manual' | 'photo_ocr' };
 
 export type CreateFuelInput = {
   filledAt: string;

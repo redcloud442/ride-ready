@@ -1,8 +1,9 @@
 import type { ReactNode } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { Appear } from '@/components/ui/appear';
 import { BrandGradient } from '@/components/brand/brand-gradient';
 import { LogoMark } from '@/components/brand/logo-mark';
 import { Wordmark } from '@/components/brand/wordmark';
@@ -16,19 +17,19 @@ export function AuthLayout({ title, children }: { title: string; children: React
       <SafeAreaView edges={['top']} style={styles.flex}>
         <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled" bounces={false}>
-            <View style={styles.hero}>
+            <Appear style={styles.hero}>
               <LogoMark size={64} />
               <Wordmark size={32} onBrand />
               <Text variant="bodyLarge" style={[styles.center, { color: brand.onBrandMuted }]}>
                 One garage. Every kilometer. Smarter ownership.
               </Text>
-            </View>
-            <View style={[styles.sheet, { backgroundColor: colors.background }]}>
+            </Appear>
+            <Appear index={1} style={[styles.sheet, { backgroundColor: colors.background }]}>
               <Text variant="headlineSmall" accessibilityRole="header">
                 {title}
               </Text>
               {children}
-            </View>
+            </Appear>
           </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>

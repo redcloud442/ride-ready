@@ -58,11 +58,23 @@
           "cameraPermission": "RideReady uses the camera to photograph receipts and your odometer, and to scan family invite codes.",
           "recordAudioAndroid": false
         }
-      ]
+      ],
+      "expo-sharing"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "54f8959a-8b3e-484e-bd28-c28b6606a508"
+      }
+    },
+    "owner": "ivorglorioso"
   }
 }

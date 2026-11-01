@@ -1,4 +1,4 @@
-import { readReceiptText, type DocumentExtraction } from '@ride-ready/core';
+import { odometerFromText, readReceiptText, type DocumentExtraction } from '@ride-ready/core';
 import { requireOptionalNativeModule } from 'expo';
 import { Directory, File, Paths } from 'expo-file-system';
 
@@ -17,6 +17,11 @@ async function imageText(uri: string) {
 /** Reads a local image (file:// or content://) into a draft for the user to confirm. */
 export async function readReceiptImage(uri: string): Promise<Omit<DocumentExtraction, 'documentId'>> {
   return readReceiptText(await imageText(uri));
+}
+
+/** The odometer on a local dashboard photo, or null. The photo is only read, never uploaded. */
+export async function readOdometerImage(uri: string) {
+  return odometerFromText((await imageText(uri)).join('\n'));
 }
 
 /** Same, for a stored document: downloads it from its short-lived URL to the cache, reads it, deletes it. */

@@ -1,7 +1,13 @@
 import type { UserPreferences } from '@ride-ready/core';
 
 import { authClient } from '@/lib/auth-client';
-import { queryClient } from '@/lib/query-client';
+import { isOfflineSave, persister, queryClient } from '@/lib/query-client';
+
+// Cached garage data (in memory and the offline copy on the phone) belongs to the previous user.
+function clearCache() {
+  queryClient.clear();
+  void persister.removeClient();
+}
 
 type BetterAuthResult = { error: { message?: string } | null };
 
@@ -25,9 +31,11 @@ export const authApi = {
     ),
 
   async signOut() {
+    // signing out drops unsent records with the cache, so wait until they reach the server
+    if (queryClient.getMutationCache().getAll().some(isOfflineSave))
+      throw new Error("Some entries haven't synced yet. Go online and wait for them before signing out.");
     await authClient.signOut();
-    // cached garage data belongs to the previous user
-    queryClient.clear();
+    clearCache();
   },
 
   // Profile: Better Auth's own endpoints (the API validates preferences and blocks `image`).
@@ -45,6 +53,6 @@ export const authApi = {
   /** Password for email accounts; Google accounts need a recent sign-in instead. */
   async deleteAccount(password: string | undefined) {
     await unwrap(authClient.deleteUser(password ? { password } : {}), "Couldn't delete your account.");
-    queryClient.clear();
+    clearCache();
   },
 };

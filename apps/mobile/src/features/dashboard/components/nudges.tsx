@@ -17,6 +17,9 @@ export function Nudges({ vehicle, metrics }: { vehicle: VehicleSummary; metrics:
   const nudges = buildNudges({ documents: docs.data ?? [], metrics, propulsion: vehicle.propulsion });
   if (!nudges.length) return null;
 
+  const hrefOf = (key: string) =>
+    key.startsWith('doc-') ? routes.vehicle(vehicle.id) : key.startsWith('service-') ? routes.logFor('maintenance', vehicle.id) : null;
+
   const tile = {
     error: [colors.errorContainer, colors.onErrorContainer],
     tertiary: [colors.tertiaryContainer, colors.onTertiaryContainer],
@@ -31,10 +34,13 @@ export function Nudges({ vehicle, metrics }: { vehicle: VehicleSummary; metrics:
           <View key={n.key}>
             {i > 0 && <Divider />}
             <TouchableRipple
-              // document nudges lead to the vehicle's documents; the others are acted on right here on Home
-              onPress={n.key.startsWith('doc-') ? () => router.push(routes.vehicle(vehicle.id)) : undefined}
-              disabled={!n.key.startsWith('doc-')}
-              accessibilityRole={n.key.startsWith('doc-') ? 'button' : 'text'}
+              // documents → the vehicle's documents, service → log the visit; the others are acted on right here on Home
+              onPress={() => {
+                const href = hrefOf(n.key);
+                if (href) router.push(href);
+              }}
+              disabled={!hrefOf(n.key)}
+              accessibilityRole={hrefOf(n.key) ? 'button' : 'text'}
               accessibilityLabel={`${n.title}. ${n.body}`}>
               <View style={styles.row}>
                 <View style={[styles.icon, { backgroundColor: tile[n.tone][0] }]}>
@@ -48,7 +54,7 @@ export function Nudges({ vehicle, metrics }: { vehicle: VehicleSummary; metrics:
                     {n.body}
                   </Text>
                 </View>
-                {n.key.startsWith('doc-') && <Icon source="chevron-right" size={22} color={colors.onSurfaceVariant} />}
+                {hrefOf(n.key) && <Icon source="chevron-right" size={22} color={colors.onSurfaceVariant} />}
               </View>
             </TouchableRipple>
           </View>

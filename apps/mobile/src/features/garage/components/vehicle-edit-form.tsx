@@ -10,6 +10,7 @@ import { ColorSwatches } from '@/components/ui/color-swatches';
 import { FormTextInput } from '@/components/ui/form-text-input';
 import { DeleteVehicle } from './delete-vehicle';
 import { ImageChoiceGrid } from '@/components/ui/image-choice-grid';
+import { routes } from '@/constants/routes';
 import { bodyStyleOptions, PROPULSION_UI, VEHICLE_TYPE_UI } from '@/constants/vehicles';
 import { useUpdateVehicle } from '@/hooks/use-vehicles';
 import { vehicleEditSchema, type VehicleEditInput, type VehicleEditValues } from '@/schemas/vehicle.schema';
@@ -49,12 +50,15 @@ export function VehicleEditForm({ vehicle }: { vehicle: VehicleSummary }) {
           {VEHICLE_TYPE_UI[vehicle.type].label} · {PROPULSION_UI[vehicle.propulsion].label}. Type and powertrain can&apos;t
           change because your fuel and charging records depend on them.
         </Text>
-        <FormTextInput control={control} name="make" label="Make" autoCapitalize="words" maxLength={60} />
-        <FormTextInput control={control} name="model" label="Model" autoCapitalize="words" maxLength={60} />
+        <FormTextInput control={control} name="make" placeholder="e.g. Honda" label="Make" autoCapitalize="words" maxLength={60} />
+        <FormTextInput control={control} name="model" placeholder="e.g. CB500X" label="Model" autoCapitalize="words" maxLength={60} />
         <FormTextInput control={control} name="variant" label="Variant (optional)" placeholder="e.g. 1.6 Hybrid, Adventure" maxLength={60} />
-        <FormTextInput control={control} name="year" label="Year" keyboardType="number-pad" maxLength={4} onSubmitEditing={submit} />
+        <FormTextInput control={control} name="year" placeholder="e.g. 2021" label="Year" keyboardType="number-pad" maxLength={4} onSubmitEditing={submit} />
         <ImageChoiceGrid control={control} name="bodyStyle" label="Shape" options={bodyStyleOptions(vehicle.type, color)} />
         <ColorSwatches control={control} name="color" label="Color" />
+        <Button icon="account-arrow-right-outline" onPress={() => router.push(routes.transferVehicle(vehicle.id))} style={styles.transfer}>
+          Sold it? Transfer to new owner
+        </Button>
         <DeleteVehicle vehicle={vehicle} />
         {update.error && (
           <HelperText type="error" visible accessibilityLiveRegion="polite">
@@ -77,4 +81,5 @@ const styles = StyleSheet.create({
   note: { marginBottom: 12 },
   footer: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 12, borderTopWidth: StyleSheet.hairlineWidth },
   cta: { height: 52 },
+  transfer: { marginTop: 24, alignSelf: 'flex-start' },
 });

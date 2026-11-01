@@ -72,7 +72,7 @@ export function FuelForm() {
         <View style={styles.cell}>
           <FormTextInput
             control={control}
-            name="liters"
+            name="liters" placeholder="e.g. 42.3"
             label="Liters"
             keyboardType="decimal-pad"
           />
@@ -80,7 +80,7 @@ export function FuelForm() {
         <View style={styles.cell}>
           <FormTextInput
             control={control}
-            name="totalPaid"
+            name="totalPaid" placeholder="e.g. 76.10"
             label="Total paid"
             keyboardType="decimal-pad"
             right={<TextInput.Affix text={currency} />}
@@ -89,7 +89,7 @@ export function FuelForm() {
       </View>
       <FormTextInput
         control={control}
-        name="pricePerLiter"
+        name="pricePerLiter" placeholder="e.g. 1.80"
         label="Price / L (optional)"
         keyboardType="decimal-pad"
         info="Any two of liters, price and total are enough"
@@ -101,7 +101,7 @@ export function FuelForm() {
         label="Odometer"
         keyboardType="decimal-pad"
         placeholder={
-          last.lastKm != null ? String(Math.round(last.lastKm)) : undefined
+          last.lastKm != null ? String(Math.round(last.lastKm)) : "e.g. 45200"
         }
         right={<TextInput.Affix text="km" />}
         info={
@@ -127,14 +127,14 @@ export function FuelForm() {
         <DateField control={control} name="filledAt" label="Date" />
         <FormTextInput
           control={control}
-          name="discount"
+          name="discount" placeholder="e.g. 2.50"
           label="Discount"
           keyboardType="decimal-pad"
           right={<TextInput.Affix text={currency} />}
         />
         <FormTextInput
           control={control}
-          name="station"
+          name="station" placeholder="e.g. Shell Main St"
           label="Station"
           maxLength={100}
         />

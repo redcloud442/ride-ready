@@ -22,7 +22,7 @@ export function NameForm({ onDone }: { onDone?: () => void }) {
 
   return (
     <>
-      <FormTextInput control={control} name="name" label="Name" autoCapitalize="words" autoComplete="name" maxLength={60} />
+      <FormTextInput control={control} name="name" placeholder="e.g. Alex Santos" label="Name" autoCapitalize="words" autoComplete="name" maxLength={60} />
       <Button
         mode="contained"
         contentStyle={{ height: 52 }}

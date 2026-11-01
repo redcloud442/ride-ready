@@ -16,7 +16,7 @@ import { useToastStore } from '@/stores/toast.store';
 import { useAppTheme } from '@/theme';
 
 import { documentFormSchema, type DocumentFormInput, type DocumentFormValues } from '../documents.schemas';
-import { usePickFile } from '../hooks/use-pick-file';
+import { usePickFile } from '@/hooks/use-pick-file';
 import { useScanReceipt } from '../hooks/use-scan-receipt';
 
 const KIND_OPTIONS = DOCUMENT_KINDS.map((k) => ({ value: k, label: DOCUMENT_KIND_UI[k].label, icon: DOCUMENT_KIND_UI[k].icon }));

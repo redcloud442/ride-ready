@@ -25,7 +25,7 @@ export function DetailsStep({ control, onSubmit }: { control: Control<Onboarding
         />
         <FormTextInput
           control={control}
-          name="odometerKm"
+          name="odometerKm" placeholder="e.g. 45200"
           label="Current odometer (optional)"
           keyboardType="decimal-pad"
           right={<TextInput.Affix text="km" />}

@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useWatch } from "react-hook-form";
-import { TextInput } from "react-native-paper";
+import { Button, TextInput } from "react-native-paper";
 import type { z } from "zod";
 
 import { DateField } from "@/components/ui/date-field";
@@ -9,6 +9,7 @@ import { useLatestOdometerKm } from "@/hooks/use-latest-odometer";
 import { formatKm } from "@/utils/format";
 
 import { useLogRecord } from "../hooks/use-log-record";
+import { useReadOdometer } from "../hooks/use-read-odometer";
 import {
   odometerFormSchema,
   type OdometerForm as Values,
@@ -22,7 +23,7 @@ export function OdometerForm() {
     updated: "Odometer reading updated",
   });
   const lastKm = useLatestOdometerKm(log.vehicle);
-  const { control, handleSubmit } = useForm<
+  const { control, handleSubmit, setValue } = useForm<
     Values,
     unknown,
     z.output<typeof odometerFormSchema>
@@ -33,12 +34,20 @@ export function OdometerForm() {
     values: log.record ? odometerValues(log.record) : undefined,
     resetOptions: { keepDirtyValues: true },
   });
+  const photo = useReadOdometer((value) =>
+    setValue("km", String(value), { shouldValidate: true, shouldDirty: true, shouldTouch: true })
+  );
   const km = Number(
     String(useWatch({ control, name: "km" }) ?? "").replace(",", ".")
   );
   const submit = () =>
     handleSubmit((v) =>
-      log.save({ readAt: v.readAt.toISOString(), km: v.km })
+      log.save({
+        readAt: v.readAt.toISOString(),
+        km: v.km,
+        // kept as read from the photo → labelled so; any change by hand makes it a manual reading
+        ...(!log.isEditing && photo.readKm === v.km ? { source: "photo_ocr" as const } : {}),
+      })
     )();
 
   // A lower value than the last reading is usually a typo; warn but allow (back-dated readings exist).
@@ -62,13 +71,23 @@ export function OdometerForm() {
       <DateField control={control} name="readAt" label="Date" />
       <FormTextInput
         control={control}
-        name="km"
+        name="km" placeholder="e.g. 45200"
         label="Odometer"
         keyboardType="decimal-pad"
         right={<TextInput.Affix text="km" />}
         info={info}
         onSubmitEditing={submit}
       />
+      <Button
+        mode="text"
+        icon="camera-outline"
+        onPress={photo.read}
+        loading={photo.reading}
+        disabled={photo.reading}
+        style={{ alignSelf: "flex-start" }}
+      >
+        Read from dashboard photo
+      </Button>
     </LogLayout>
   );
 }

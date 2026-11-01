@@ -33,6 +33,7 @@ export function DeleteAccount() {
             <TextInput
               mode="outlined"
               label="Password"
+              placeholder="Your password"
               secureTextEntry
               value={password}
               onChangeText={setPassword}

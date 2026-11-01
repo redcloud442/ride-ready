@@ -79,7 +79,7 @@ export function ChargingForm() {
         <View style={styles.cell}>
           <FormTextInput
             control={control}
-            name="kwhPurchased"
+            name="kwhPurchased" placeholder="e.g. 32.5"
             label="Energy"
             keyboardType="decimal-pad"
             right={<TextInput.Affix text="kWh" />}
@@ -89,7 +89,7 @@ export function ChargingForm() {
         <View style={styles.cell}>
           <FormTextInput
             control={control}
-            name="cost"
+            name="cost" placeholder="e.g. 12.40"
             label="Cost"
             keyboardType="decimal-pad"
             right={<TextInput.Affix text={currency} />}
@@ -102,7 +102,7 @@ export function ChargingForm() {
         label="Odometer"
         keyboardType="decimal-pad"
         placeholder={
-          last.lastKm != null ? String(Math.round(last.lastKm)) : undefined
+          last.lastKm != null ? String(Math.round(last.lastKm)) : "e.g. 45200"
         }
         right={<TextInput.Affix text="km" />}
         info={
@@ -137,7 +137,7 @@ export function ChargingForm() {
           <View style={styles.cell}>
             <FormTextInput
               control={control}
-              name="socStartPct"
+              name="socStartPct" placeholder="e.g. 20"
               label="Battery start"
               keyboardType="number-pad"
               right={<TextInput.Affix text="%" />}
@@ -146,7 +146,7 @@ export function ChargingForm() {
           <View style={styles.cell}>
             <FormTextInput
               control={control}
-              name="socEndPct"
+              name="socEndPct" placeholder="e.g. 80"
               label="Battery end"
               keyboardType="number-pad"
               right={<TextInput.Affix text="%" />}
@@ -155,7 +155,7 @@ export function ChargingForm() {
         </View>
         <FormTextInput
           control={control}
-          name="location"
+          name="location" placeholder="e.g. Ionity A2, Home"
           label="Location"
           maxLength={200}
         />

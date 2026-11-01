@@ -1,7 +1,7 @@
 import { DOCUMENT_KINDS } from '@ride-ready/core';
 import { z } from 'zod';
 
-import type { PickedFile } from './hooks/use-pick-file';
+import type { PickedFile } from '@/hooks/use-pick-file';
 
 export const documentFormSchema = z.object({
   kind: z.enum(DOCUMENT_KINDS, { error: 'Choose a type' }),

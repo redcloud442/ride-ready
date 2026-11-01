@@ -60,7 +60,7 @@ export function BatteryForm() {
       <DateField control={control} name="measuredAt" label="Measured on" />
       <FormTextInput
         control={control}
-        name="sohPct"
+        name="sohPct" placeholder="e.g. 94"
         label="State of health"
         keyboardType="decimal-pad"
         right={<TextInput.Affix text="%" />}

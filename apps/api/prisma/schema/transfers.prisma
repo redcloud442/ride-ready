@@ -1,0 +1,16 @@
+// A vehicle handed to its next owner (selling the car). The id is the secret inside the QR code / link;
+// whoever signed in opens it first can accept it. The car and its files then belong to them.
+model VehicleTransfer {
+  id              String    @id @default(uuid())
+  vehicleId       String
+  vehicle         Vehicle   @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  fromUserId      String
+  includeReceipts Boolean
+  includeCosts    Boolean   @default(true)
+  expiresAt       DateTime
+  acceptedAt      DateTime?
+  toUserId        String?
+  createdAt       DateTime  @default(now())
+
+  @@index([vehicleId])
+}

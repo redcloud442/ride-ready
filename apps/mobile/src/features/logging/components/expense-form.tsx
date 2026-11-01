@@ -76,7 +76,7 @@ export function ExpenseForm() {
       />
       <FormTextInput
         control={control}
-        name="amount"
+        name="amount" placeholder="e.g. 85.00"
         label="Amount"
         keyboardType="decimal-pad"
         right={<TextInput.Affix text={currency} />}
@@ -92,7 +92,7 @@ export function ExpenseForm() {
         <DateField control={control} name="paidAt" label="Date" />
         <FormTextInput
           control={control}
-          name="note"
+          name="note" placeholder="e.g. Annual road tax"
           label="Note"
           multiline
           maxLength={500}

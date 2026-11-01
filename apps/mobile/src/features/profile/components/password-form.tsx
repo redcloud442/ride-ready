@@ -44,15 +44,15 @@ export function PasswordForm({ onDone }: { onDone?: () => void }) {
 
   return (
     <>
-      <PasswordInput control={control} name="currentPassword" label="Current password" autoComplete="current-password" />
+      <PasswordInput control={control} name="currentPassword" placeholder="Your current password" label="Current password" autoComplete="current-password" />
       <PasswordInput
         control={control}
-        name="newPassword"
+        name="newPassword" placeholder="At least 8 characters"
         label="New password"
         autoComplete="new-password"
         info="At least 8 characters, with a letter and a number"
       />
-      <PasswordInput control={control} name="confirmPassword" label="Confirm new password" autoComplete="new-password" />
+      <PasswordInput control={control} name="confirmPassword" placeholder="Type it again" label="Confirm new password" autoComplete="new-password" />
       <Button mode="contained" contentStyle={{ height: 52 }} loading={change.isPending} disabled={change.isPending} onPress={submit}>
         Change password
       </Button>

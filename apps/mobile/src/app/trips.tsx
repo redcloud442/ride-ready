@@ -1,7 +1,8 @@
 import { monthOf } from '@ride-ready/core';
-import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 
+import { Appear } from '@/components/ui/appear';
 import { ErrorBanner } from '@/components/ui/error-banner';
 import { InfoCard } from '@/components/ui/info-card';
 import { StatTile } from '@/components/ui/stat-tile';
@@ -26,16 +27,18 @@ export default function TripsScreen() {
       contentContainerStyle={styles.content}
       refreshControl={<RefreshControl refreshing={trips.isRefetching} onRefresh={() => void trips.refetch()} tintColor={colors.primary} />}>
       <VehicleSwitcher />
-      <TripRecorderCard vehicle={vehicle} />
+      <Appear index={1}>
+        <TripRecorderCard vehicle={vehicle} />
+      </Appear>
 
       <Text variant="titleMedium" style={styles.section}>
         This month
       </Text>
-      <View style={styles.row}>
+      <Appear index={2} style={styles.row}>
         <StatTile label="Trips" value={trips.data ? String(month.count) : null} emptyHint="Record your first trip" />
         <StatTile label="GPS distance" value={month.count ? formatKm(month.km) : null} emptyHint="From recorded trips" />
         <StatTile label="Business" value={month.count ? formatKm(month.businessKm) : null} emptyHint="Mark trips as business" />
-      </View>
+      </Appear>
 
       <Text variant="titleMedium" style={styles.section}>
         Recent trips
@@ -44,7 +47,9 @@ export default function TripsScreen() {
       {trips.isLoading ? (
         <ActivityIndicator style={styles.loading} />
       ) : vehicle && trips.data?.length ? (
-        <TripList vehicle={vehicle} trips={trips.data} />
+        <Appear index={3}>
+          <TripList vehicle={vehicle} trips={trips.data} />
+        </Appear>
       ) : (
         <InfoCard icon="map-marker-path" title="No trips yet" body="Start a trip above; distance and route are saved when you finish." />
       )}

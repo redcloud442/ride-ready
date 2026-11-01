@@ -1,3 +1,4 @@
+import { onlineManager } from "@tanstack/react-query";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 
@@ -87,6 +88,11 @@ export function useLogRecord<K extends RecordKind>(
           { vehicleId: vehicle.id, input: { ...input, ...receipt } },
           done
         );
+      }
+      // offline the save waits for a connection (persisted, replayed later), so don't hold the form open
+      if (!onlineManager.isOnline()) {
+        show("Saved on this phone. It will sync when you're back online.");
+        router.back();
       }
     },
   };

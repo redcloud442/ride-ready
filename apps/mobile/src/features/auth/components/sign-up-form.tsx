@@ -23,7 +23,7 @@ export function SignUpForm() {
     <View>
       <FormTextInput
         control={control}
-        name="name"
+        name="name" placeholder="e.g. Alex Santos"
         label="Name"
         autoComplete="name"
         textContentType="name"
@@ -31,7 +31,7 @@ export function SignUpForm() {
       />
       <FormTextInput
         control={control}
-        name="email"
+        name="email" placeholder="you@example.com"
         label="Email"
         autoCapitalize="none"
         autoComplete="email"
@@ -41,7 +41,7 @@ export function SignUpForm() {
       />
       <PasswordInput
         control={control}
-        name="password"
+        name="password" placeholder="At least 8 characters"
         label="Password"
         info="8+ characters with a letter and a number"
         autoComplete="new-password"
@@ -49,7 +49,7 @@ export function SignUpForm() {
       />
       <PasswordInput
         control={control}
-        name="confirmPassword"
+        name="confirmPassword" placeholder="Type it again"
         label="Confirm password"
         left="lock-check-outline"
         autoComplete="new-password"

@@ -101,7 +101,7 @@ export function MaintenanceForm() {
         <View style={styles.cell}>
           <FormTextInput
             control={control}
-            name="laborCost"
+            name="laborCost" placeholder="e.g. 120"
             label="Labor"
             keyboardType="decimal-pad"
             right={<TextInput.Affix text={currency} />}
@@ -110,7 +110,7 @@ export function MaintenanceForm() {
         <View style={styles.cell}>
           <FormTextInput
             control={control}
-            name="partsCost"
+            name="partsCost" placeholder="e.g. 65"
             label="Parts"
             keyboardType="decimal-pad"
             right={<TextInput.Affix text={currency} />}
@@ -123,7 +123,7 @@ export function MaintenanceForm() {
         label="Odometer"
         keyboardType="decimal-pad"
         placeholder={
-          last.lastKm != null ? String(Math.round(last.lastKm)) : undefined
+          last.lastKm != null ? String(Math.round(last.lastKm)) : "e.g. 45200"
         }
         right={<TextInput.Affix text="km" />}
         info={
@@ -141,7 +141,7 @@ export function MaintenanceForm() {
         <DateField control={control} name="performedAt" label="Date" />
         <FormTextInput
           control={control}
-          name="workshop"
+          name="workshop" placeholder="e.g. City Auto Service"
           label="Workshop"
           maxLength={100}
         />
